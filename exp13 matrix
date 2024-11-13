@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100 // Maximum number of vertices in the graph
+
+int adj[MAX][MAX]; // Adjacency matrix to represent the graph
+int visited[MAX];  // Visited array for tracking visited nodes in DFS and BFS
+
+// Function to initialize the adjacency matrix and visited array
+void initializeGraph(int vertices) {
+    for (int i = 0; i < vertices; i++) {
+        visited[i] = 0;
+        for (int j = 0; j < vertices; j++) {
+            adj[i][j] = 0;
+        }
+    }
+}
+
+// Function to add an edge to the graph (undirected graph)
+void addEdge(int u, int v, int vertices) {
+    if (u >= 0 && u < vertices && v >= 0 && v < vertices) {
+        adj[u][v] = 1;
+        adj[v][u] = 1;
+    } else {
+        printf("Invalid edge: (%d, %d)\n", u, v);
+    }
+}
+
+// Function for Breadth-First Search
+void BFS(int start, int vertices) {
+    if (start < 0 || start >= vertices) {
+        printf("Invalid starting vertex for BFS: %d\n", start);
+        return;
+    }
+
+    int queue[MAX], front = 0, rear = 0;
+    visited[start] = 1;
+    queue[rear++] = start; // Enqueue start node
+
+    printf("BFS traversal: ");
+    while (front < rear) {
+        int node = queue[front++]; // Dequeue a node
+        printf("%d ", node);
+
+        // Visit all adjacent unvisited nodes
+        for (int i = 0; i < vertices; i++) {
+            if (adj[node][i] == 1 && !visited[i]) {
+                queue[rear++] = i; // Enqueue the adjacent node
+                visited[i] = 1;
+            }
+        }
+    }
+    printf("\n");
+}
+
+// Recursive function for Depth-First Search
+void DFS(int start, int vertices) {
+    if (start < 0 || start >= vertices) {
+        printf("Invalid starting vertex for DFS: %d\n", start);
+        return;
+    }
+
+    visited[start] = 1;
+    printf("%d ", start);
+
+    // Visit all adjacent unvisited nodes
+    for (int i = 0; i < vertices; i++) {
+        if (adj[start][i] == 1 && !visited[i]) {
+            DFS(i, vertices);
+        }
+    }
+}
+
+// Main function
+int main() {
+    int vertices, edges, u, v, start;
+
+    printf("Enter the number of vertices (max %d): ", MAX);
+    scanf("%d", &vertices);
+    if (vertices <= 0 || vertices > MAX) {
+        printf("Invalid number of vertices.\n");
+        return 1;
+    }
+    initializeGraph(vertices);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    printf("Enter the edges (u v):\n");
+    for (int i = 0; i < edges; i++) {
+        scanf("%d %d", &u, &v);
+        addEdge(u, v, vertices);
+    }
+
+    // BFS Traversal
+    printf("Enter the starting vertex for BFS: ");
+    scanf("%d", &start);
+    for (int i = 0; i < vertices; i++) visited[i] = 0; // Reset visited array for BFS
+    BFS(start, vertices);
+
+    // DFS Traversal
+    printf("Enter the starting vertex for DFS: ");
+    scanf("%d", &start);
+    for (int i = 0; i < vertices; i++) visited[i] = 0; // Reset visited array for DFS
+    printf("DFS traversal: ");
+    DFS(start, vertices);
+    printf("\n");
+
+    return 0;
+}
+
