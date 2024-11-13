@@ -1,0 +1,115 @@
+ #include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for doubly linked list
+struct DNode {
+    int data;
+    struct DNode* prev;
+    struct DNode* next;
+};
+
+// Function to create a new node
+struct DNode* createNode(int data) {
+    struct DNode* newNode = (struct DNode*)malloc(sizeof(struct DNode));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert at the end of the list
+void insert(struct DNode** head, int data) {
+    struct DNode* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct DNode* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+}
+
+// Function to display the list in forward order
+void displayForward(struct DNode* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct DNode* temp = head;
+    printf("List in forward order: ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Function to display the list in reverse order
+void displayReverse(struct DNode* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    // Move to the last node
+    struct DNode* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    // Traverse in reverse from the last node
+    printf("List in reverse order: ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->prev;
+    }
+    printf("NULL\n");
+}
+
+// Main function with menu
+int main() {
+    struct DNode* list = NULL;
+    int choice, data;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Create new list\n");
+        printf("2. Insert into list\n");
+        printf("3. Display list in forward order\n");
+        printf("4. Display list in reverse order\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                // Reset the list
+                list = NULL;
+                printf("New list created.\n");
+                break;
+            case 2:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                insert(&list, data);
+                printf("Inserted %d into the list.\n", data);
+                break;
+            case 3:
+                printf("Displaying list in forward order:\n");
+                displayForward(list);
+                break;
+            case 4:
+                printf("Displaying list in reverse order:\n");
+                displayReverse(list);
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
