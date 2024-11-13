@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for doubly linked list
+struct DNode {
+    int data;
+    struct DNode* prev;
+    struct DNode* next;
+};
+
+// Function to create a new node
+struct DNode* createDNode(int data) {
+    struct DNode* newNode = (struct DNode*)malloc(sizeof(struct DNode));
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert at the end of the list
+void insert(struct DNode** head, int data) {
+    struct DNode* newNode = createDNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct DNode* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+}
+
+// Function to delete a node by value
+void deleteNode(struct DNode** head, int data) {
+    struct DNode* temp = *head;
+
+    // Find the node to delete
+    while (temp != NULL && temp->data != data) {
+        temp = temp->next;
+    }
+
+    // If node not found
+    if (temp == NULL) {
+        printf("Node with data %d not found.\n", data);
+        return;
+    }
+
+    // If node to be deleted is the head
+    if (temp == *head) {
+        *head = temp->next;
+    }
+
+    // Update the next node's prev pointer if it exists
+    if (temp->next != NULL) {
+        temp->next->prev = temp->prev;
+    }
+
+    // Update the previous node's next pointer if it exists
+    if (temp->prev != NULL) {
+        temp->prev->next = temp->next;
+    }
+
+    free(temp);
+    printf("Node with data %d deleted.\n", data);
+}
+
+// Function to display the list
+void display(struct DNode* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct DNode* temp = head;
+    printf("NULL <- ");
+    while (temp != NULL) {
+        printf("%d <-> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+// Main function with menu
+int main() {
+    struct DNode* list = NULL;
+    int choice, data;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Create list\n");
+        printf("2. Insert into list\n");
+        printf("3. Delete from list\n");
+        printf("4. Display list\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Creating a new list.\n");
+                list = NULL;
+                break;
+            case 2:
+                printf("Enter data to insert: ");
+                scanf("%d", &data);
+                insert(&list, data);
+                break;
+            case 3:
+                printf("Enter data to delete: ");
+                scanf("%d", &data);
+                deleteNode(&list, data);
+                break;
+            case 4:
+                printf("Displaying list:\n");
+                display(list);
+                break;
+            case 5:
+                exit(0);
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+    return 0;
+}
