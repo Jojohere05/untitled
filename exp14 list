@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100 // Maximum number of vertices in the graph
+
+// Structure for an adjacency list node
+struct Node {
+    int vertex;
+    struct Node* next;
+};
+
+// Structure for an adjacency list
+struct Graph {
+    int numVertices;
+    struct Node* adjLists[MAX];
+    int visited[MAX];
+};
+
+// Function to create a new adjacency list node
+struct Node* createNode(int v) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->vertex = v;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to create a graph
+struct Graph* createGraph(int vertices) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->numVertices = vertices;
+
+    for (int i = 0; i < vertices; i++) {
+        graph->adjLists[i] = NULL;
+        graph->visited[i] = 0;
+    }
+
+    return graph;
+}
+
+// Function to add an edge to the graph (undirected)
+void addEdge(struct Graph* graph, int src, int dest) {
+    // Add edge from src to dest
+    struct Node* newNode = createNode(dest);
+    newNode->next = graph->adjLists[src];
+    graph->adjLists[src] = newNode;
+
+    // Since it's an undirected graph, add edge from dest to src
+    newNode = createNode(src);
+    newNode->next = graph->adjLists[dest];
+    graph->adjLists[dest] = newNode;
+}
+
+// Function to perform Breadth-First Search
+void BFS(struct Graph* graph, int startVertex) {
+    int queue[MAX], front = 0, rear = 0;
+    graph->visited[startVertex] = 1;
+    queue[rear++] = startVertex;
+
+    printf("BFS traversal: ");
+    while (front < rear) {
+        int currentVertex = queue[front++];
+        printf("%d ", currentVertex);
+
+        // Visit all adjacent unvisited vertices
+        struct Node* temp = graph->adjLists[currentVertex];
+        while (temp) {
+            int adjVertex = temp->vertex;
+
+            if (graph->visited[adjVertex] == 0) {
+                queue[rear++] = adjVertex;
+                graph->visited[adjVertex] = 1;
+            }
+            temp = temp->next;
+        }
+    }
+    printf("\n");
+}
+
+// Recursive function to perform Depth-First Search
+void DFS(struct Graph* graph, int vertex) {
+    graph->visited[vertex] = 1;
+    printf("%d ", vertex);
+
+    struct Node* temp = graph->adjLists[vertex];
+    while (temp) {
+        int adjVertex = temp->vertex;
+        if (graph->visited[adjVertex] == 0) {
+            DFS(graph, adjVertex);
+        }
+        temp = temp->next;
+    }
+}
+
+// Main function
+int main() {
+    int vertices, edges, src, dest, startVertex;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &vertices);
+
+    struct Graph* graph = createGraph(vertices);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    printf("Enter the edges (source destination):\n");
+    for (int i = 0; i < edges; i++) {
+        scanf("%d %d", &src, &dest);
+        addEdge(graph, src, dest);
+    }
+
+    // BFS Traversal
+    printf("Enter the starting vertex for BFS: ");
+    scanf("%d", &startVertex);
+    for (int i = 0; i < vertices; i++) graph->visited[i] = 0; // Reset visited array for BFS
+    BFS(graph, startVertex);
+
+    // DFS Traversal
+    printf("Enter the starting vertex for DFS: ");
+    scanf("%d", &startVertex);
+    for (int i = 0; i < vertices; i++) graph->visited[i] = 0; // Reset visited array for DFS
+    printf("DFS traversal: ");
+    DFS(graph, startVertex);
+    printf("\n");
+
+    return 0;
+}
